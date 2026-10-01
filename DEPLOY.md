@@ -79,7 +79,26 @@ Từ giờ, mỗi khi bạn (hoặc tôi thay bạn, qua các file tôi gửi) c
 
 ---
 
+## Bước 4 — Thêm biến môi trường Supabase vào Vercel (Ngày 4)
+
+Project Supabase đã được tạo (tên `hoc-tienganh-co-trinh`, vùng Singapore) và đã kết nối vào code. File `.env.local` trong gói bạn tải về đã có sẵn URL và khóa `anon` thật — khi bạn chạy `npm run dev` ở máy mình, Next.js tự đọc file này, không cần làm gì thêm.
+
+Nhưng bản deploy trên Vercel **không dùng `.env.local`** (file này không được đẩy lên GitHub). Cần khai báo lại trên Vercel:
+
+1. Vào https://vercel.com → chọn project `hoc-tienganh-co-trinh` → **Settings** → **Environment Variables**
+2. Thêm lần lượt:
+
+| Name | Value |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://fizcgthzdvfjwnfvshqq.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `sb_publishable_Ralyji9OSriAaZhnVI1Qtg_dnvahJcM` |
+
+3. Bấm **Save**, sau đó vào tab **Deployments** → bấm **Redeploy** ở bản mới nhất (biến môi trường chỉ áp dụng cho lần deploy sau khi lưu).
+
+> Chưa cần thêm `SUPABASE_SERVICE_ROLE_KEY` ở đây — khóa đó chỉ dùng ở Ngày 6, lúc đó sẽ hướng dẫn thêm.
+
+---
+
 ## Việc cần làm ở các ngày sau (không làm ở đây)
 
-- **Ngày 4:** tạo project Supabase, lấy khóa API, thêm vào `.env.local` (máy bạn) và vào Vercel → Project → Settings → Environment Variables (để bản deploy live cũng chạy được).
-- Không tự thêm biến môi trường Supabase vào Vercel trước Ngày 4, vì chưa có project Supabase để lấy khóa.
+- **Ngày 6:** lấy `SUPABASE_SERVICE_ROLE_KEY` từ Supabase Dashboard → Settings → API, thêm vào `.env.local` (máy bạn) và vào Vercel (giống bước 4 ở trên, thêm 1 dòng nữa).
