@@ -99,6 +99,25 @@ Nhưng bản deploy trên Vercel **không dùng `.env.local`** (file này không
 
 ---
 
+## Bước 5 — Tạo tài khoản giáo viên đầu tiên (Ngày 5)
+
+Trang `/login` đã có, nhưng chưa có tài khoản nào để đăng nhập thử. Vì lý do bảo mật, Claude không tự tạo tài khoản bằng mật khẩu thật của bạn — bạn tự tạo theo các bước sau:
+
+1. Vào https://supabase.com/dashboard/project/fizcgthzdvfjwnfvshqq/auth/users
+2. Bấm **Add user** → **Create new user**
+3. Điền:
+   - **Email:** email thật của bạn (ví dụ email của cô Trinh)
+   - **Password:** mật khẩu bạn tự chọn (không cần gửi cho ai, kể cả Claude)
+   - Tích **Auto Confirm User** (để khỏi cần xác nhận qua email)
+4. Bấm **Create user**
+
+> Lưu ý: cách tạo này **chưa đánh dấu đúng vai trò "giáo viên"** trong hệ thống (mặc định sẽ là "học sinh"). Nhắn cho Claude biết email bạn vừa tạo, Claude sẽ sửa lại đúng vai trò "giáo viên" trong database giúp bạn (không cần biết mật khẩu).
+
+Sau khi có tài khoản, thử đăng nhập:
+- Chạy `npm run dev`, mở http://localhost:3000/login
+- Đăng nhập bằng **email** + mật khẩu vừa tạo
+- Đăng nhập xong sẽ về trang chủ, thấy dòng "Xin chào, ... (Giáo viên)" và nút "Đăng xuất"
+
 ## Việc cần làm ở các ngày sau (không làm ở đây)
 
 - **Ngày 6:** lấy `SUPABASE_SERVICE_ROLE_KEY` từ Supabase Dashboard → Settings → API, thêm vào `.env.local` (máy bạn) và vào Vercel (giống bước 4 ở trên, thêm 1 dòng nữa).
