@@ -1,10 +1,14 @@
 # features/auth/
 
-Đăng nhập, đăng xuất, quản lý session.
+Đăng nhập, đăng xuất, quản lý session, giáo viên tạo tài khoản học sinh.
 
 - `services/resolve-email.ts` — đổi "tên đăng nhập" (học sinh) hoặc email (giáo viên) thành email thật gửi cho Supabase Auth.
-- `actions.ts` — Server Action `signIn`, `signOut`.
-- `components/LoginForm.tsx` — form đăng nhập (Client Component, dùng `useActionState` để hiện trạng thái đang xử lý/lỗi).
-- `components/UserStatus.tsx` — hiển thị "Xin chào, <tên>" + nút đăng xuất nếu đã đăng nhập, hoặc link "Đăng nhập" nếu chưa.
+- `actions.ts`:
+  - `signIn` — đăng nhập, tự chuyển đến `/teacher` hoặc `/student` theo vai trò.
+  - `signOut` — đăng xuất.
+  - `createStudentAccount` — giáo viên tạo tài khoản học sinh (kiểm tra lại vai trò "teacher" phía server trước khi cho tạo, không chỉ dựa vào giao diện).
+- `components/LoginForm.tsx` — form đăng nhập.
+- `components/UserStatus.tsx` — hiển thị trạng thái đăng nhập + nút đăng xuất.
+- `components/CreateStudentForm.tsx` — form tạo tài khoản học sinh (chỉ hiện trong `/teacher/students`, nhưng bản thân Server Action vẫn tự kiểm tra quyền).
 
-Chưa có: chặn truy cập theo route (middleware) — sẽ làm ở Ngày 6.
+Middleware (`middleware.ts` ở thư mục gốc) chặn `/student/*` và `/teacher/*` theo đăng nhập + đúng vai trò — xem Ngày 6 trong ARCHITECTURE.md.
