@@ -116,8 +116,41 @@ Trang `/login` đã có, nhưng chưa có tài khoản nào để đăng nhập 
 Sau khi có tài khoản, thử đăng nhập:
 - Chạy `npm run dev`, mở http://localhost:3000/login
 - Đăng nhập bằng **email** + mật khẩu vừa tạo
-- Đăng nhập xong sẽ về trang chủ, thấy dòng "Xin chào, ... (Giáo viên)" và nút "Đăng xuất"
+- Đăng nhập xong sẽ chuyển đến **Dashboard giáo viên** (`/teacher`), thấy dòng "Xin chào, ... (Giáo viên)" và nút "Đăng xuất"
+
+## Bước 6 — Lấy SERVICE_ROLE_KEY để giáo viên tạo được tài khoản học sinh (Ngày 6)
+
+Từ Ngày 6, trang `/teacher/students` cho phép giáo viên tạo tài khoản học sinh. Chức năng này cần `SUPABASE_SERVICE_ROLE_KEY` — khóa quyền cao nhất, Claude **không có quyền lấy khóa này** (đúng về bảo mật). Bạn tự lấy và thêm vào 2 nơi:
+
+### 6a. Lấy khóa
+
+1. Vào https://supabase.com/dashboard/project/fizcgthzdvfjwnfvshqq/settings/api
+2. Tìm mục **Project API keys**, phần **service_role** (có ghi "secret")
+3. Bấm **Reveal** rồi copy khóa đó
+
+> Khóa này **mạnh hơn cả mật khẩu quản trị** — bỏ qua toàn bộ RLS. Tuyệt đối không dán vào chỗ nào có chữ `NEXT_PUBLIC_`, không commit lên GitHub, không chia sẻ cho ai kể cả Claude.
+
+### 6b. Thêm vào máy bạn (để test bằng `npm run dev`)
+
+Mở file `.env.local` trong thư mục dự án, tìm dòng:
+```
+SUPABASE_SERVICE_ROLE_KEY=
+```
+Dán khóa vào ngay sau dấu `=` (không có dấu cách, không có dấu ngoặc kép), lưu file lại.
+
+### 6c. Thêm vào Vercel (để bản đã deploy cũng dùng được)
+
+1. Vercel → project → **Settings** → **Environment Variables**
+2. **Key:** `SUPABASE_SERVICE_ROLE_KEY` — **Value:** dán khóa vừa copy — bấm **Save**
+3. Vào **Deployments** → **Redeploy** bản mới nhất
+
+### Test thử
+
+- Đăng nhập bằng tài khoản giáo viên → vào `/teacher` → bấm **"Tạo tài khoản học sinh"**
+- Điền họ tên, tên đăng nhập (ví dụ `hs_an`), mật khẩu → bấm **Tạo tài khoản**
+- Thấy dòng chữ xanh "Đã tạo tài khoản học sinh..." là thành công
+- Thử đăng xuất, đăng nhập lại bằng tên đăng nhập học sinh vừa tạo (không phải email) → phải vào được **Dashboard học sinh** (`/student`)
 
 ## Việc cần làm ở các ngày sau (không làm ở đây)
 
-- **Ngày 6:** lấy `SUPABASE_SERVICE_ROLE_KEY` từ Supabase Dashboard → Settings → API, thêm vào `.env.local` (máy bạn) và vào Vercel (giống bước 4 ở trên, thêm 1 dòng nữa).
+- Chưa có.
