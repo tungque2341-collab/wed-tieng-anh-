@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { UserStatus } from "@/features/auth/components/UserStatus";
+import { AddVocabularyForm } from "@/features/vocabulary/components/AddVocabularyForm";
 import { VocabularyList } from "@/features/vocabulary/components/VocabularyList";
 import { listVocabulary } from "@/features/vocabulary/services/vocabulary-service";
 import { createClient } from "@/lib/supabase/server";
@@ -22,8 +23,10 @@ export default async function TeacherVocabularyPage() {
           Danh sách từ vựng
         </h1>
         <p className="mb-8 max-w-sm text-center text-sm text-zinc-600">
-          Thêm, sửa, xóa từ vựng sẽ có ở Ngày 9–10.
+          Sửa, xóa từ vựng sẽ có ở Ngày 10.
         </p>
+
+        <AddVocabularyForm />
 
         <div className="w-full max-w-2xl">
           {error ? (
