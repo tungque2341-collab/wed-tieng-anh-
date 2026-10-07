@@ -23,7 +23,7 @@ export default async function TeacherVocabularyPage() {
           Danh sách từ vựng
         </h1>
         <p className="mb-8 max-w-sm text-center text-sm text-zinc-600">
-          Sửa, xóa từ vựng sẽ có ở Ngày 10.
+          Tìm kiếm, lọc, sắp xếp sẽ có ở Ngày 11.
         </p>
 
         <AddVocabularyForm />

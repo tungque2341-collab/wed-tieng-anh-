@@ -10,4 +10,7 @@ Quản lý từ vựng.
 - `components/AddVocabularyForm.tsx` — form thêm từ vựng, dùng `useActionState`, tự xóa trắng form sau khi thêm thành công.
 - Trang `app/teacher/vocabulary/page.tsx` gọi `listVocabulary()` và hiển thị qua `VocabularyList`, có `AddVocabularyForm` ở trên.
 
-Chưa có: sửa/xóa, tìm kiếm/lọc, import hàng loạt (Ngày 10–12).
+- `components/VocabularyRow.tsx` — mỗi dòng tự quản lý trạng thái sửa (bật/tắt chế độ sửa inline) và xóa (có `confirm()` trước khi xóa). Dùng `useActionState` riêng cho sửa và xóa.
+- `actions.ts` có thêm `updateVocabularyAction`, `deleteVocabularyAction` — dùng chung hàm `requireTeacher()` để tránh lặp code kiểm tra quyền.
+
+Chưa có: tìm kiếm/lọc, import hàng loạt (Ngày 11–12).
