@@ -1,13 +1,26 @@
 import type { Vocabulary } from "@/types/vocabulary";
 import { VocabularyRow } from "./VocabularyRow";
 
-export function VocabularyList({ items }: { items: Vocabulary[] }) {
+export function VocabularyList({
+  items,
+  isFiltered = false,
+}: {
+  items: Vocabulary[];
+  /** true khi đang tìm kiếm/lọc, để hiện đúng thông báo rỗng */
+  isFiltered?: boolean;
+}) {
   if (items.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-zinc-300 px-6 py-12 text-center">
-        <p className="text-zinc-600">Chưa có từ vựng nào.</p>
+        <p className="text-zinc-600">
+          {isFiltered
+            ? "Không tìm thấy từ vựng nào khớp."
+            : "Chưa có từ vựng nào."}
+        </p>
         <p className="mt-1 text-sm text-zinc-400">
-          Dùng form phía trên để thêm từ đầu tiên.
+          {isFiltered
+            ? "Thử từ khóa khác hoặc bấm \"Xóa bộ lọc\"."
+            : "Dùng form phía trên để thêm từ đầu tiên."}
         </p>
       </div>
     );

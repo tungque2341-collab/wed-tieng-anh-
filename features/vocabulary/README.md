@@ -13,4 +13,7 @@ Quản lý từ vựng.
 - `components/VocabularyRow.tsx` — mỗi dòng tự quản lý trạng thái sửa (bật/tắt chế độ sửa inline) và xóa (có `confirm()` trước khi xóa). Dùng `useActionState` riêng cho sửa và xóa.
 - `actions.ts` có thêm `updateVocabularyAction`, `deleteVocabularyAction` — dùng chung hàm `requireTeacher()` để tránh lặp code kiểm tra quyền.
 
-Chưa có: tìm kiếm/lọc, import hàng loạt (Ngày 11–12).
+- `components/VocabularyFilters.tsx` — form tìm kiếm + sắp xếp, dùng `method="get"` thuần (không cần Client Component, không cần JavaScript) — submit tự chuyển trang qua query string (`?q=...&sort=...`).
+- `listVocabulary()` nhận thêm `{ search?, sortBy? }`. Khi có tìm kiếm: chạy 2 truy vấn riêng (theo "word", theo "meaning") rồi gộp + loại trùng ở ứng dụng, tránh phải tự ráp chuỗi `.or(...)` dễ vỡ cú pháp khi gõ dấu phẩy/ngoặc.
+
+Chưa có: import hàng loạt (Ngày 12).
