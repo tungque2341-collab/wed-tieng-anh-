@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { UserStatus } from "@/features/auth/components/UserStatus";
 import { AddVocabularyForm } from "@/features/vocabulary/components/AddVocabularyForm";
+import { ImportVocabularyForm } from "@/features/vocabulary/components/ImportVocabularyForm";
 import { VocabularyFilters } from "@/features/vocabulary/components/VocabularyFilters";
 import { VocabularyList } from "@/features/vocabulary/components/VocabularyList";
 import {
@@ -40,14 +41,11 @@ export default async function TeacherVocabularyPage({ searchParams }: PageProps)
       </header>
 
       <main className="flex flex-1 flex-col items-center px-6 pb-16 pt-8">
-        <h1 className="mb-2 text-2xl font-bold text-zinc-900">
+        <h1 className="mb-6 text-2xl font-bold text-zinc-900">
           Danh sách từ vựng
         </h1>
-        <p className="mb-8 max-w-sm text-center text-sm text-zinc-600">
-          Import nhiều từ cùng lúc sẽ có ở Ngày 12.
-        </p>
-
         <AddVocabularyForm />
+        <ImportVocabularyForm />
 
         <VocabularyFilters search={search} sortBy={sortBy} />
 

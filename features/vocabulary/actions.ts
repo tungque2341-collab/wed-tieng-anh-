@@ -2,8 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { parseBulkVocabularyInput } from "./parse-bulk-import";
 import {
   createVocabulary,
+  createVocabularyBulk,
   deleteVocabulary,
   updateVocabulary,
 } from "./services/vocabulary-service";
@@ -119,4 +121,54 @@ export async function deleteVocabularyAction(
 
   revalidatePath("/teacher/vocabulary");
   return { error: null };
+}
+
+export type ImportVocabularyState = {
+  error: string | null;
+  success: boolean;
+  importedCount: number;
+};
+
+export async function importVocabularyAction(
+  _prevState: ImportVocabularyState,
+  formData: FormData,
+): Promise<ImportVocabularyState> {
+  const supabase = await createClient();
+
+  const check = await requireTeacher(supabase);
+  if ("error" in check) {
+    return { error: check.error, success: false, importedCount: 0 };
+  }
+
+  const text = String(formData.get("bulk") ?? "");
+  const parsed = parseBulkVocabularyInput(text);
+
+  if (parsed.length === 0) {
+    return { error: "Chưa nhập dữ liệu nào.", success: false, importedCount: 0 };
+  }
+
+  const failedLines = parsed.filter(
+    (line): line is Extract<typeof parsed[number], { ok: false }> => !line.ok,
+  );
+
+  if (failedLines.length > 0) {
+    const detail = failedLines
+      .map((line) => `dòng ${line.lineNumber} ("${line.raw.trim()}")`)
+      .join(", ");
+    return {
+      error: `Có ${failedLines.length} dòng chưa đúng định dạng: ${detail}. Chưa thêm từ nào, hãy sửa lại rồi thử lại.`,
+      success: false,
+      importedCount: 0,
+    };
+  }
+
+  const items = parsed
+    .filter((line): line is Extract<typeof parsed[number], { ok: true }> => line.ok)
+    .map((line) => line.value);
+
+  const { data, error } = await createVocabularyBulk(supabase, check.teacherId, items);
+  if (error) return { error, success: false, importedCount: 0 };
+
+  revalidatePath("/teacher/vocabulary");
+  return { error: null, success: true, importedCount: data?.length ?? 0 };
 }

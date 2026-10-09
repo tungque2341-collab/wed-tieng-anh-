@@ -124,6 +124,32 @@ export async function createVocabulary(
   return { data: data as Vocabulary, error: null };
 }
 
+/** Thêm nhiều từ vựng cùng lúc (import hàng loạt, Ngày 12) */
+export async function createVocabularyBulk(
+  supabase: SupabaseClient,
+  teacherId: string,
+  items: NewVocabulary[],
+): Promise<ServiceResult<Vocabulary[]>> {
+  if (items.length === 0) {
+    return { data: null, error: "Không có từ nào để thêm." };
+  }
+
+  const rows = items.map((input) => ({
+    teacher_id: teacherId,
+    word: input.word.trim(),
+    meaning: input.meaning.trim(),
+    phonetic: input.phonetic?.trim() || null,
+    example: input.example?.trim() || null,
+    image_url: null,
+    audio_url: null,
+  }));
+
+  const { data, error } = await supabase.from("vocabulary").insert(rows).select("*");
+
+  if (error) return { data: null, error: error.message };
+  return { data: data as Vocabulary[], error: null };
+}
+
 /** Sửa một từ vựng đã có (RLS chỉ cho sửa từ vựng của chính giáo viên đó) */
 export async function updateVocabulary(
   supabase: SupabaseClient,

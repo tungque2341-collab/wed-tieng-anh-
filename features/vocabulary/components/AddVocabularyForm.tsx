@@ -12,12 +12,17 @@ export function AddVocabularyForm() {
   );
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Thêm thành công -> xóa trắng form để gõ từ tiếp theo luôn
+  // Thêm thành công -> xóa trắng form để gõ từ tiếp theo luôn.
+  // Dependency phải là CẢ object `state`, không chỉ `state.success`:
+  // mỗi lần Server Action chạy xong, state là 1 object MỚI (dù success
+  // vẫn = true như lần trước) — nếu chỉ theo dõi state.success, thêm
+  // liên tiếp 2 từ thành công thì lần 2 effect sẽ KHÔNG chạy lại (giá
+  // trị boolean không đổi), form sẽ không tự xóa trắng lần 2 trở đi.
   useEffect(() => {
     if (state.success) {
       formRef.current?.reset();
     }
-  }, [state.success]);
+  }, [state]);
 
   return (
     <form

@@ -16,4 +16,9 @@ Quản lý từ vựng.
 - `components/VocabularyFilters.tsx` — form tìm kiếm + sắp xếp, dùng `method="get"` thuần (không cần Client Component, không cần JavaScript) — submit tự chuyển trang qua query string (`?q=...&sort=...`).
 - `listVocabulary()` nhận thêm `{ search?, sortBy? }`. Khi có tìm kiếm: chạy 2 truy vấn riêng (theo "word", theo "meaning") rồi gộp + loại trùng ở ứng dụng, tránh phải tự ráp chuỗi `.or(...)` dễ vỡ cú pháp khi gõ dấu phẩy/ngoặc.
 
-Chưa có: import hàng loạt (Ngày 12).
+- `parse-bulk-import.ts` — hàm thuần phân tích văn bản nhập nhiều từ (mỗi dòng 1 từ, ngăn cách bởi `|`). Không đụng Supabase/DOM nên test được bằng Node thường, không cần mạng.
+- `createVocabularyBulk()` — thêm nhiều dòng cùng lúc bằng 1 câu `insert` (mảng), không chèn từng từ một.
+- `actions.ts` có thêm `importVocabularyAction`: nếu có dòng sai định dạng thì báo rõ dòng nào, **không thêm từ nào cả** (tất cả hoặc không gì, tránh import dở dang gây khó hiểu).
+- `components/ImportVocabularyForm.tsx` — ẩn mặc định (nút "Nhập nhiều từ cùng lúc" để mở ra), vì đây là tính năng phụ.
+
+Vậy là đã xong toàn bộ Giai đoạn 3 — Từ vựng (Ngày 7–12).
