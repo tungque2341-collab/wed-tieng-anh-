@@ -28,6 +28,12 @@ create table public.profiles (
   role        text not null check (role in ('student', 'teacher')),
   username    text,                    -- chỉ học sinh dùng, duy nhất
   full_name   text not null,
+  -- Giáo viên nào đã tạo tài khoản học sinh này (Ngày 6, cột thêm Ngày 13).
+  -- Cần thiết vì RLS chỉ cho giáo viên xem học sinh ĐÃ Ở TRONG LỚP của
+  -- mình — nếu không có cột này, học sinh vừa tạo xong sẽ "biến mất"
+  -- khỏi tầm nhìn của giáo viên cho tới khi được thêm vào 1 lớp nào đó
+  -- (mà để thêm vào lớp thì trước tiên phải nhìn thấy được).
+  created_by  uuid references public.profiles(id) on delete set null,
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
@@ -36,6 +42,8 @@ create table public.profiles (
 create unique index profiles_username_key
   on public.profiles (username)
   where username is not null;
+
+create index profiles_created_by_idx on public.profiles (created_by);
 
 create trigger trg_profiles_updated_at
   before update on public.profiles
@@ -50,12 +58,13 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, role, username, full_name)
+  insert into public.profiles (id, role, username, full_name, created_by)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'role', 'student'),
     new.raw_user_meta_data->>'username',
-    coalesce(new.raw_user_meta_data->>'full_name', '')
+    coalesce(new.raw_user_meta_data->>'full_name', ''),
+    nullif(new.raw_user_meta_data->>'created_by', '')::uuid
   );
   return new;
 end;

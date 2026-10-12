@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { requireTeacher } from "@/lib/auth/require-teacher";
 import { createClient } from "@/lib/supabase/server";
 import { parseBulkVocabularyInput } from "./parse-bulk-import";
 import {
@@ -9,31 +10,6 @@ import {
   deleteVocabulary,
   updateVocabulary,
 } from "./services/vocabulary-service";
-
-/** Dùng chung cho mọi Server Action trong file này: xác nhận người gọi
- * đã đăng nhập và có vai trò "teacher". Trả về user.id nếu hợp lệ,
- * hoặc một chuỗi lỗi nếu không. */
-async function requireTeacher(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-): Promise<{ teacherId: string } | { error: string }> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return { error: "Bạn cần đăng nhập." };
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (profile?.role !== "teacher") {
-    return { error: "Chỉ giáo viên mới được thực hiện thao tác này." };
-  }
-
-  return { teacherId: user.id };
-}
 
 export type CreateVocabularyState = {
   error: string | null;

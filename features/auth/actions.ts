@@ -139,6 +139,9 @@ export async function createStudentAccount(
       role: "student",
       username,
       full_name: fullName,
+      // Để RLS (Ngày 13) cho phép giáo viên luôn xem lại học sinh
+      // mình đã tạo, kể cả trước khi thêm vào lớp nào.
+      created_by: user.id,
     },
   });
 

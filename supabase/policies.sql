@@ -136,6 +136,10 @@ create policy "profiles_select"
   on public.profiles for select
   using (
     id = auth.uid()
+    -- Giáo viên luôn xem được học sinh do chính mình tạo (Ngày 13),
+    -- không chỉ học sinh đã ở trong lớp của mình — nếu không, học sinh
+    -- vừa tạo xong (Ngày 6) sẽ không ai nhìn thấy được nữa.
+    or created_by = auth.uid()
     or (public.get_my_role() = 'teacher' and public.is_my_student(id))
   );
 
