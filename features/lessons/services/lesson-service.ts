@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Vocabulary } from "@/types/vocabulary";
 
 export type ServiceResult<T> = { data: T; error: null } | { data: null; error: string };
 
@@ -59,4 +60,55 @@ export async function createLesson(
 
   if (error) return { data: null, error: error.message };
   return { data: data as Lesson, error: null };
+}
+
+/** Từ vựng đã gán vào 1 bài học cụ thể */
+export async function listVocabularyInLesson(
+  supabase: SupabaseClient,
+  lessonId: string,
+): Promise<ServiceResult<Vocabulary[]>> {
+  const { data, error } = await supabase
+    .from("lesson_vocabulary")
+    .select("vocabulary(*)")
+    .eq("lesson_id", lessonId);
+
+  if (error) return { data: null, error: error.message };
+
+  const items = (data as unknown as { vocabulary: Vocabulary }[]).map(
+    (row) => row.vocabulary,
+  );
+  return { data: items, error: null };
+}
+
+export async function addVocabularyToLesson(
+  supabase: SupabaseClient,
+  lessonId: string,
+  vocabularyId: string,
+): Promise<ServiceResult<true>> {
+  const { error } = await supabase
+    .from("lesson_vocabulary")
+    .insert({ lesson_id: lessonId, vocabulary_id: vocabularyId });
+
+  if (error) {
+    if (error.code === "23505") {
+      return { data: null, error: "Từ này đã có trong bài học rồi." };
+    }
+    return { data: null, error: error.message };
+  }
+  return { data: true, error: null };
+}
+
+export async function removeVocabularyFromLesson(
+  supabase: SupabaseClient,
+  lessonId: string,
+  vocabularyId: string,
+): Promise<ServiceResult<true>> {
+  const { error } = await supabase
+    .from("lesson_vocabulary")
+    .delete()
+    .eq("lesson_id", lessonId)
+    .eq("vocabulary_id", vocabularyId);
+
+  if (error) return { data: null, error: error.message };
+  return { data: true, error: null };
 }

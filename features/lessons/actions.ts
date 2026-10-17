@@ -3,7 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { requireTeacher } from "@/lib/auth/require-teacher";
 import { createClient } from "@/lib/supabase/server";
-import { createLesson } from "./services/lesson-service";
+import {
+  addVocabularyToLesson,
+  createLesson,
+  removeVocabularyFromLesson,
+} from "./services/lesson-service";
 
 export type CreateLessonState = {
   error: string | null;
@@ -28,4 +32,50 @@ export async function createLessonAction(
 
   revalidatePath("/teacher/lessons");
   return { error: null, success: true };
+}
+
+export type LessonVocabularyState = {
+  error: string | null;
+};
+
+export async function addVocabularyToLessonAction(
+  _prevState: LessonVocabularyState,
+  formData: FormData,
+): Promise<LessonVocabularyState> {
+  const supabase = await createClient();
+
+  const check = await requireTeacher(supabase);
+  if ("error" in check) return { error: check.error };
+
+  const lessonId = String(formData.get("lesson_id") ?? "");
+  const vocabularyId = String(formData.get("vocabulary_id") ?? "");
+  if (!lessonId || !vocabularyId) return { error: "Thiếu thông tin." };
+
+  // RLS (Ngày 2) đảm bảo chỉ thêm được vào bài học do chính giáo viên
+  // này tạo.
+  const { error } = await addVocabularyToLesson(supabase, lessonId, vocabularyId);
+  if (error) return { error };
+
+  revalidatePath(`/teacher/lessons/${lessonId}`);
+  return { error: null };
+}
+
+export async function removeVocabularyFromLessonAction(
+  _prevState: LessonVocabularyState,
+  formData: FormData,
+): Promise<LessonVocabularyState> {
+  const supabase = await createClient();
+
+  const check = await requireTeacher(supabase);
+  if ("error" in check) return { error: check.error };
+
+  const lessonId = String(formData.get("lesson_id") ?? "");
+  const vocabularyId = String(formData.get("vocabulary_id") ?? "");
+  if (!lessonId || !vocabularyId) return { error: "Thiếu thông tin." };
+
+  const { error } = await removeVocabularyFromLesson(supabase, lessonId, vocabularyId);
+  if (error) return { error };
+
+  revalidatePath(`/teacher/lessons/${lessonId}`);
+  return { error: null };
 }
