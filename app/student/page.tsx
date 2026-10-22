@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { UserStatus } from "@/features/auth/components/UserStatus";
 
 export default function StudentHome() {
@@ -11,8 +12,14 @@ export default function StudentHome() {
           Dashboard học sinh
         </h1>
         <p className="mt-2 text-zinc-600">
-          Trang này sẽ có bài học, flashcard, quiz... (xây đầy đủ ở Ngày 27).
+          Flashcard, quiz... sẽ có ở các ngày sau.
         </p>
+        <Link
+          href="/student/lessons"
+          className="mt-6 rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+        >
+          Bài học của tôi
+        </Link>
       </main>
     </div>
   );

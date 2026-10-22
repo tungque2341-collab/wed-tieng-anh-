@@ -2,11 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { UserStatus } from "@/features/auth/components/UserStatus";
 import { AddVocabularyToLessonForm } from "@/features/lessons/components/AddVocabularyToLessonForm";
+import { AssignLessonToClassForm } from "@/features/lessons/components/AssignLessonToClassForm";
 import { RemoveVocabularyFromLessonButton } from "@/features/lessons/components/RemoveVocabularyFromLessonButton";
+import { UnassignClassButton } from "@/features/lessons/components/UnassignClassButton";
 import {
   getLessonById,
+  listClassesForLesson,
   listVocabularyInLesson,
 } from "@/features/lessons/services/lesson-service";
+import { listClasses } from "@/features/classes/services/class-service";
 import { listVocabulary } from "@/features/vocabulary/services/vocabulary-service";
 import { createClient } from "@/lib/supabase/server";
 
@@ -18,11 +22,14 @@ export default async function LessonDetailPage({ params }: PageProps) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const [lessonResult, inLessonResult, allVocabResult] = await Promise.all([
-    getLessonById(supabase, id),
-    listVocabularyInLesson(supabase, id),
-    listVocabulary(supabase),
-  ]);
+  const [lessonResult, inLessonResult, allVocabResult, assignedClassesResult, allClassesResult] =
+    await Promise.all([
+      getLessonById(supabase, id),
+      listVocabularyInLesson(supabase, id),
+      listVocabulary(supabase),
+      listClassesForLesson(supabase, id),
+      listClasses(supabase),
+    ]);
 
   if (lessonResult.error || !lessonResult.data) {
     notFound();
@@ -35,6 +42,12 @@ export default async function LessonDetailPage({ params }: PageProps) {
   const inLessonIds = new Set(inLesson.map((v) => v.id));
   const available = (allVocabResult.data ?? []).filter(
     (v) => !inLessonIds.has(v.id),
+  );
+
+  const assignedClasses = assignedClassesResult.data ?? [];
+  const assignedClassIds = new Set(assignedClasses.map((c) => c.id));
+  const availableClasses = (allClassesResult.data ?? []).filter(
+    (c) => !assignedClassIds.has(c.id),
   );
 
   return (
@@ -56,6 +69,32 @@ export default async function LessonDetailPage({ params }: PageProps) {
           </p>
         )}
         {!lessonResult.data.description && <div className="mb-6" />}
+
+        <div className="mb-8 w-full max-w-md rounded-lg border border-zinc-200 bg-white p-4">
+          <h2 className="mb-3 text-sm font-semibold text-zinc-900">
+            Gán cho lớp
+          </h2>
+
+          <AssignLessonToClassForm lessonId={id} availableClasses={availableClasses} />
+
+          {assignedClasses.length > 0 && (
+            <ul className="mt-3 space-y-1">
+              {assignedClasses.map((cls) => (
+                <li
+                  key={cls.id}
+                  className="flex items-center justify-between text-sm"
+                >
+                  <span className="text-zinc-700">{cls.name}</span>
+                  <UnassignClassButton
+                    lessonId={id}
+                    classId={cls.id}
+                    className={cls.name}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <div className="w-full max-w-md">
           <AddVocabularyToLessonForm lessonId={id} availableVocabulary={available} />

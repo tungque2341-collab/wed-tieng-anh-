@@ -112,3 +112,56 @@ export async function removeVocabularyFromLesson(
   if (error) return { data: null, error: error.message };
   return { data: true, error: null };
 }
+
+export type ClassSummary = { id: string; name: string };
+
+/** Lớp đã được gán bài học này */
+export async function listClassesForLesson(
+  supabase: SupabaseClient,
+  lessonId: string,
+): Promise<ServiceResult<ClassSummary[]>> {
+  const { data, error } = await supabase
+    .from("lesson_classes")
+    .select("classes(id, name)")
+    .eq("lesson_id", lessonId);
+
+  if (error) return { data: null, error: error.message };
+
+  const items = (data as unknown as { classes: ClassSummary }[]).map(
+    (row) => row.classes,
+  );
+  return { data: items, error: null };
+}
+
+export async function assignLessonToClass(
+  supabase: SupabaseClient,
+  lessonId: string,
+  classId: string,
+): Promise<ServiceResult<true>> {
+  const { error } = await supabase
+    .from("lesson_classes")
+    .insert({ lesson_id: lessonId, class_id: classId });
+
+  if (error) {
+    if (error.code === "23505") {
+      return { data: null, error: "Bài học này đã gán cho lớp rồi." };
+    }
+    return { data: null, error: error.message };
+  }
+  return { data: true, error: null };
+}
+
+export async function unassignLessonFromClass(
+  supabase: SupabaseClient,
+  lessonId: string,
+  classId: string,
+): Promise<ServiceResult<true>> {
+  const { error } = await supabase
+    .from("lesson_classes")
+    .delete()
+    .eq("lesson_id", lessonId)
+    .eq("class_id", classId);
+
+  if (error) return { data: null, error: error.message };
+  return { data: true, error: null };
+}

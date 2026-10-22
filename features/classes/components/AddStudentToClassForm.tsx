@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import type { StudentProfile } from "../services/class-service";
 import { addStudentToClassAction, type ClassMembershipState } from "../actions";
@@ -22,9 +23,9 @@ export function AddStudentToClassForm({
     return (
       <p className="mb-6 text-sm text-zinc-500">
         Không còn học sinh nào để thêm — tạo thêm tài khoản học sinh ở trang{" "}
-        <a href="/teacher/students" className="underline">
+        <Link href="/teacher/students" className="underline">
           Tạo tài khoản học sinh
-        </a>
+        </Link>
         .
       </p>
     );

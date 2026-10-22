@@ -5,8 +5,10 @@ import { requireTeacher } from "@/lib/auth/require-teacher";
 import { createClient } from "@/lib/supabase/server";
 import {
   addVocabularyToLesson,
+  assignLessonToClass,
   createLesson,
   removeVocabularyFromLesson,
+  unassignLessonFromClass,
 } from "./services/lesson-service";
 
 export type CreateLessonState = {
@@ -74,6 +76,50 @@ export async function removeVocabularyFromLessonAction(
   if (!lessonId || !vocabularyId) return { error: "Thiếu thông tin." };
 
   const { error } = await removeVocabularyFromLesson(supabase, lessonId, vocabularyId);
+  if (error) return { error };
+
+  revalidatePath(`/teacher/lessons/${lessonId}`);
+  return { error: null };
+}
+
+export type LessonClassState = {
+  error: string | null;
+};
+
+export async function assignLessonToClassAction(
+  _prevState: LessonClassState,
+  formData: FormData,
+): Promise<LessonClassState> {
+  const supabase = await createClient();
+
+  const check = await requireTeacher(supabase);
+  if ("error" in check) return { error: check.error };
+
+  const lessonId = String(formData.get("lesson_id") ?? "");
+  const classId = String(formData.get("class_id") ?? "");
+  if (!lessonId || !classId) return { error: "Thiếu thông tin." };
+
+  const { error } = await assignLessonToClass(supabase, lessonId, classId);
+  if (error) return { error };
+
+  revalidatePath(`/teacher/lessons/${lessonId}`);
+  return { error: null };
+}
+
+export async function unassignLessonFromClassAction(
+  _prevState: LessonClassState,
+  formData: FormData,
+): Promise<LessonClassState> {
+  const supabase = await createClient();
+
+  const check = await requireTeacher(supabase);
+  if ("error" in check) return { error: check.error };
+
+  const lessonId = String(formData.get("lesson_id") ?? "");
+  const classId = String(formData.get("class_id") ?? "");
+  if (!lessonId || !classId) return { error: "Thiếu thông tin." };
+
+  const { error } = await unassignLessonFromClass(supabase, lessonId, classId);
   if (error) return { error };
 
   revalidatePath(`/teacher/lessons/${lessonId}`);

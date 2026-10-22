@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import type { Vocabulary } from "@/types/vocabulary";
 import {
@@ -25,9 +26,9 @@ export function AddVocabularyToLessonForm({
     return (
       <p className="mb-6 text-sm text-zinc-500">
         Không còn từ nào để thêm — tạo thêm từ vựng ở trang{" "}
-        <a href="/teacher/vocabulary" className="underline">
+        <Link href="/teacher/vocabulary" className="underline">
           Từ vựng
-        </a>
+        </Link>
         .
       </p>
     );
