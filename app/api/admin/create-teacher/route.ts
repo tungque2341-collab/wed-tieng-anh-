@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         email,
         password,
         email_confirm: true,
-        user_metadata: { full_name: fullName },
+        user_metadata: { full_name: fullName, role: 'teacher' },
       });
       if (createError) throw createError;
       userId = newUser.user.id;
