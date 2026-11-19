@@ -14,12 +14,18 @@ export async function POST(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
   if (!serviceRoleKey || !supabaseUrl) {
-    return NextResponse.json({ error: 'Missing Supabase config' }, { status: 500 });
+    return NextResponse.json({ error: 'Missing Supabase config', hasKey: !!serviceRoleKey, hasUrl: !!supabaseUrl }, { status: 500 });
   }
 
   const supabase = createClient(supabaseUrl, serviceRoleKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
+
+  // Test service role key works
+  const { data: testData, error: testError } = await supabase.from('profiles').select('id').limit(1);
+  if (testError) {
+    return NextResponse.json({ error: 'Service role test failed', details: testError.message }, { status: 500 });
+  }
 
   try {
     const body = await request.json();
