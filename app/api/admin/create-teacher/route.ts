@@ -50,12 +50,11 @@ export async function POST(request: NextRequest) {
       userId = newUser.user.id;
     }
 
-    // Upsert profile
+    // Upsert profile (profiles table doesn't have email column)
     const { error: profileError } = await supabase
       .from('profiles')
       .upsert({
         id: userId,
-        email,
         full_name: fullName,
         role: 'teacher',
         username,
