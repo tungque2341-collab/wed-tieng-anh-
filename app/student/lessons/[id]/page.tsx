@@ -48,6 +48,41 @@ export default async function StudentLessonPage({ params }: PageProps) {
         )}
         {!lessonResult.data.description && <div className="mb-6" />}
 
+        {/* Navigation tabs */}
+        <nav className="mb-6 w-full max-w-md flex gap-2" aria-label="Chế độ học tập">
+          <Link
+            href={`/student/lessons/${id}`}
+            className="flex-1 rounded-lg bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-white hover:bg-zinc-800"
+            aria-current="page"
+          >
+            📖 Xem từ vựng
+          </Link>
+          <Link
+            href={`/student/lessons/${id}/flashcard`}
+            className="flex-1 rounded-lg border border-zinc-300 px-4 py-2 text-center text-sm font-medium text-zinc-700 hover:bg-zinc-100"
+          >
+            🎴 Flashcard
+          </Link>
+          <Link
+            href={`/student/lessons/${id}/quiz`}
+            className="flex-1 rounded-lg border border-zinc-300 px-4 py-2 text-center text-sm font-medium text-zinc-700 hover:bg-zinc-100"
+          >
+            ❓ Quiz
+          </Link>
+          <Link
+            href={`/student/lessons/${id}/spelling`}
+            className="flex-1 rounded-lg border border-zinc-300 px-4 py-2 text-center text-sm font-medium text-zinc-700 hover:bg-zinc-100"
+          >
+            ✍️ Đánh vần
+          </Link>
+          <Link
+            href={`/student/lessons/${id}/game`}
+            className="flex-1 rounded-lg border border-zinc-300 px-4 py-2 text-center text-sm font-medium text-zinc-700 hover:bg-zinc-100"
+          >
+            🎮 Game
+          </Link>
+        </nav>
+
         <div className="w-full max-w-md">
           {vocabResult.error ? (
             <p role="alert" className="text-sm text-red-600">

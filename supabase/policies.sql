@@ -386,3 +386,31 @@ create policy "quiz_results_insert"
 
 -- Không có policy UPDATE / DELETE: kết quả một lần làm bài không sửa được,
 -- học sinh làm lại thì tạo dòng quiz_results mới.
+
+
+-- ============================================================
+-- 13. spelling_attempts
+-- ============================================================
+alter table public.spelling_attempts enable row level security;
+
+create policy "spelling_attempts_select"
+  on public.spelling_attempts for select
+  using (student_id = auth.uid() or public.is_my_student(student_id));
+
+create policy "spelling_attempts_insert"
+  on public.spelling_attempts for insert
+  with check (student_id = auth.uid());
+
+
+-- ============================================================
+-- 14. falling_words_scores
+-- ============================================================
+alter table public.falling_words_scores enable row level security;
+
+create policy "falling_words_scores_select"
+  on public.falling_words_scores for select
+  using (student_id = auth.uid() or public.is_my_student(student_id));
+
+create policy "falling_words_scores_insert"
+  on public.falling_words_scores for insert
+  with check (student_id = auth.uid());

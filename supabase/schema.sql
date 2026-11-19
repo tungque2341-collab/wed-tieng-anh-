@@ -262,3 +262,40 @@ create table public.quiz_results (
 
 create index quiz_results_quiz_id_idx on public.quiz_results (quiz_id);
 create index quiz_results_student_id_idx on public.quiz_results (student_id);
+
+
+-- ============================================================
+-- 13. spelling_attempts — lịch sử đánh vần của học sinh
+-- ============================================================
+create table public.spelling_attempts (
+  id            uuid primary key default gen_random_uuid(),
+  student_id    uuid not null references public.profiles(id) on delete cascade,
+  vocabulary_id uuid not null references public.vocabulary(id) on delete cascade,
+  lesson_id     uuid not null references public.lessons(id) on delete cascade,
+  is_correct    boolean not null,
+  user_answer   text not null,
+  attempts      int not null default 1,
+  created_at    timestamptz not null default now()
+);
+
+create index spelling_attempts_student_id_idx on public.spelling_attempts (student_id);
+create index spelling_attempts_vocabulary_id_idx on public.spelling_attempts (vocabulary_id);
+create index spelling_attempts_lesson_id_idx on public.spelling_attempts (lesson_id);
+
+
+-- ============================================================
+-- 14. falling_words_scores — điểm game rơi từ
+-- ============================================================
+create table public.falling_words_scores (
+  id                uuid primary key default gen_random_uuid(),
+  student_id        uuid not null references public.profiles(id) on delete cascade,
+  lesson_id         uuid not null references public.lessons(id) on delete cascade,
+  score             int not null,
+  words_correct     int not null,
+  words_total       int not null,
+  duration_seconds  int not null,
+  created_at        timestamptz not null default now()
+);
+
+create index falling_words_scores_student_id_idx on public.falling_words_scores (student_id);
+create index falling_words_scores_lesson_id_idx on public.falling_words_scores (lesson_id);

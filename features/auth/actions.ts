@@ -49,6 +49,59 @@ export async function signOut() {
   redirect("/");
 }
 
+/**
+ * Kiểm tra người dùng hiện tại là học sinh, trả về profile nếu đúng.
+ * Ném lỗi nếu chưa đăng nhập hoặc không phải học sinh.
+ */
+export async function requireStudent() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Chưa đăng nhập.");
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id, role, full_name, username")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!profile || profile.role !== "student") {
+    throw new Error("Chỉ học sinh mới được thực hiện thao tác này.");
+  }
+
+  return profile;
+}
+
+/**
+ * Kiểm tra người dùng hiện tại là giáo viên, trả về profile nếu đúng.
+ */
+export async function requireTeacher() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Chưa đăng nhập.");
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id, role, full_name")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!profile || profile.role !== "teacher") {
+    throw new Error("Chỉ giáo viên mới được thực hiện thao tác này.");
+  }
+
+  return profile;
+}
+
 export type CreateStudentState = {
   error: string | null;
   success: string | null;
