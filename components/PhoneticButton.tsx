@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 type Props = {
-  phonetic: string;
+  phonetic?: string | null;
   className?: string;
 };
 
@@ -15,6 +15,7 @@ export function PhoneticButton({ phonetic, className = "" }: Props) {
   const [isSpeaking, setIsSpeaking] = useState(false);
 
   const speak = () => {
+    if (!phonetic) return;
     if ("speechSynthesis" in window) {
       // Hủy phát âm đang chạy (nếu có)
       window.speechSynthesis.cancel();
@@ -31,6 +32,8 @@ export function PhoneticButton({ phonetic, className = "" }: Props) {
       window.speechSynthesis.speak(utterance);
     }
   };
+
+  if (!phonetic) return null;
 
   return (
     <button

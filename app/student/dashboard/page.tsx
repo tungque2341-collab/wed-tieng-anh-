@@ -53,7 +53,7 @@ export default async function StudentDashboardPage() {
   const recentQuizHistory = (quizHistoryResult.data ?? []).slice(0, 5);
 
   // Lấy lịch sử đánh vần gần đây
-  const spellingHistoryResult = await listSpellingHistory(supabase, user.id);
+  const spellingHistoryResult = await listSpellingHistory(supabase, user.id, "");
   const recentSpellingHistory = (spellingHistoryResult.data ?? []).slice(0, 5);
 
   // Thống kê

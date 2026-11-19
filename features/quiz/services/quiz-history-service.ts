@@ -81,8 +81,8 @@ export async function listQuizHistory(
     score: row.score,
     total_questions: row.total_questions,
     completed_at: row.completed_at,
-    quiz_title: row.quizzes.title,
-    lesson_title: row.quizzes.lessons.title,
+    quiz_title: (row.quizzes as any)?.title ?? "",
+    lesson_title: (row.quizzes?.lessons as any)?.[0]?.title ?? "",
   }));
 
   return { data: items, error: null };
@@ -155,6 +155,9 @@ export async function getQuizResultDetail(
     is_correct: false,
   }));
 
+  const quizzes = resultData.quizzes as any[];
+  const lessons = quizzes[0]?.lessons as any[];
+
   return {
     data: {
       id: resultData.id,
@@ -163,8 +166,8 @@ export async function getQuizResultDetail(
       score: resultData.score,
       total_questions: resultData.total_questions,
       completed_at: resultData.completed_at,
-      quiz_title: resultData.quizzes.title,
-      lesson_title: resultData.quizzes.lessons.title,
+      quiz_title: quizzes[0]?.title ?? "",
+      lesson_title: lessons[0]?.title ?? "",
       questions,
     },
     error: null,

@@ -20,7 +20,7 @@ export async function getFallingWordsAction(
   const result = await listFallingWordsForLesson(supabase, lessonId, student.id);
 
   if (result.error) return { words: [], error: result.error };
-  return { words: result.data, error: null };
+  return { words: result.data ?? [], error: null };
 }
 
 /**

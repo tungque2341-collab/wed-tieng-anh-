@@ -57,8 +57,8 @@ export async function listFlashcardsForLesson(
   });
 
   // Sắp xếp: mới -> đang học -> thành thạo -> chưa có tiến độ
-  const statusOrder = { new: 0, learning: 1, mastered: 2, null: 3 };
-  results.sort((a, b) => (statusOrder[a.progress_status] ?? 3) - (statusOrder[b.progress_status] ?? 3));
+  const statusOrder: Record<string, number> = { new: 0, learning: 1, mastered: 2, null: 3 };
+  results.sort((a, b) => (statusOrder[a.progress_status ?? "null"] ?? 3) - (statusOrder[b.progress_status ?? "null"] ?? 3));
 
   return { data: results, error: null };
 }

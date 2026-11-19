@@ -31,10 +31,11 @@ export async function createQuizAction(
     return { error: "Thiếu thông tin bài học hoặc tiêu đề.", quizId: null };
   }
 
-  const auth = await requireTeacher();
-  if (!auth.ok) return { error: auth.error, quizId: null };
+  const supabase = await createClient();
+  const auth = await requireTeacher(supabase);
+  if ("error" in auth) return { error: auth.error, quizId: null };
 
-  const result = await createQuiz(auth.supabase, auth.teacherId, lessonId, title);
+  const result = await createQuiz(supabase, auth.teacherId, lessonId, title);
   if (result.error) return { error: result.error, quizId: null };
 
   revalidatePath(`/teacher/lessons/${lessonId}/quiz`);
@@ -54,10 +55,11 @@ export async function addQuizQuestionAction(
     return { ...initialQuizActionState, error: "Thiếu quiz ID hoặc nội dung câu hỏi." };
   }
 
-  const auth = await requireTeacher();
-  if (!auth.ok) return { error: auth.error, success: null };
+  const supabase = await createClient();
+  const auth = await requireTeacher(supabase);
+  if ("error" in auth) return { error: auth.error, success: null };
 
-  const result = await addQuizQuestion(auth.supabase, quizId, questionText, orderIndex);
+  const result = await addQuizQuestion(supabase, quizId, questionText, orderIndex);
   if (result.error) return { error: result.error, success: null };
 
   revalidatePath(`/teacher/quiz/${quizId}/questions`);
@@ -77,13 +79,14 @@ export async function addQuizAnswerAction(
     return { ...initialQuizActionState, error: "Thiếu question ID hoặc nội dung đáp án." };
   }
 
-  const auth = await requireTeacher();
-  if (!auth.ok) return { error: auth.error, success: null };
+  const supabase = await createClient();
+  const auth = await requireTeacher(supabase);
+  if ("error" in auth) return { error: auth.error, success: null };
 
-  const result = await addQuizAnswer(auth.supabase, questionId, answerText, isCorrect);
+  const result = await addQuizAnswer(supabase, questionId, answerText, isCorrect);
   if (result.error) return { error: result.error, success: null };
 
-  revalidatePath(`/teacher/quiz/${questionId}/answers`); // Sẽ cần điều chỉnh path
+  revalidatePath(`/teacher/quiz/${questionId}/answers`);
   return { error: null, success: "Đã thêm đáp án." };
 }
 
@@ -99,10 +102,11 @@ export async function deleteQuizQuestionAction(
     return { ...initialQuizActionState, error: "Thiếu question ID." };
   }
 
-  const auth = await requireTeacher();
-  if (!auth.ok) return { error: auth.error, success: null };
+  const supabase = await createClient();
+  const auth = await requireTeacher(supabase);
+  if ("error" in auth) return { error: auth.error, success: null };
 
-  const result = await deleteQuizQuestion(auth.supabase, questionId);
+  const result = await deleteQuizQuestion(supabase, questionId);
   if (result.error) return { error: result.error, success: null };
 
   revalidatePath(`/teacher/quiz/${quizId}/questions`);
@@ -121,10 +125,11 @@ export async function deleteQuizAnswerAction(
     return { ...initialQuizActionState, error: "Thiếu answer ID." };
   }
 
-  const auth = await requireTeacher();
-  if (!auth.ok) return { error: auth.error, success: null };
+  const supabase = await createClient();
+  const auth = await requireTeacher(supabase);
+  if ("error" in auth) return { error: auth.error, success: null };
 
-  const result = await deleteQuizAnswer(auth.supabase, answerId);
+  const result = await deleteQuizAnswer(supabase, answerId);
   if (result.error) return { error: result.error, success: null };
 
   revalidatePath(`/teacher/quiz/${questionId}/answers`);
@@ -143,10 +148,11 @@ export async function updateQuizQuestionAction(
     return { ...initialQuizActionState, error: "Thiếu question ID hoặc nội dung." };
   }
 
-  const auth = await requireTeacher();
-  if (!auth.ok) return { error: auth.error, success: null };
+  const supabase = await createClient();
+  const auth = await requireTeacher(supabase);
+  if ("error" in auth) return { error: auth.error, success: null };
 
-  const result = await updateQuizQuestion(auth.supabase, questionId, questionText);
+  const result = await updateQuizQuestion(supabase, questionId, questionText);
   if (result.error) return { error: result.error, success: null };
 
   revalidatePath(`/teacher/quiz/${questionId}/questions`);
@@ -166,10 +172,11 @@ export async function updateQuizAnswerAction(
     return { ...initialQuizActionState, error: "Thiếu answer ID hoặc nội dung." };
   }
 
-  const auth = await requireTeacher();
-  if (!auth.ok) return { error: auth.error, success: null };
+  const supabase = await createClient();
+  const auth = await requireTeacher(supabase);
+  if ("error" in auth) return { error: auth.error, success: null };
 
-  const result = await updateQuizAnswer(auth.supabase, answerId, answerText, isCorrect);
+  const result = await updateQuizAnswer(supabase, answerId, answerText, isCorrect);
   if (result.error) return { error: result.error, success: null };
 
   revalidatePath(`/teacher/quiz/${answerId}/answers`);

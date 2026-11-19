@@ -39,7 +39,7 @@ export function SpellingGame({ words, lessonId, onComplete }: Props) {
     setShowResult(true);
   }, [userAnswer, currentWord.word]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (!userAnswer.trim()) return;
     setIsSubmitting(true);
     setError(null);
@@ -158,9 +158,7 @@ export function SpellingGame({ words, lessonId, onComplete }: Props) {
         {/* Audio button */}
         <div className="mb-6 flex items-center justify-center gap-4">
           <PhoneticButton
-            text={currentWord.word}
-            phonetic={currentWord.phonetic}
-            audioUrl={currentWord.audio_url}
+            phonetic={currentWord.phonetic ?? undefined}
             className="text-2xl px-6 py-3"
             aria-label={`Nghe phát âm từ ${currentWord.word}`}
           />
@@ -177,7 +175,7 @@ export function SpellingGame({ words, lessonId, onComplete }: Props) {
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
             onKeyDown={handleKeyDown}
-            disabled={showResult && isCorrect}
+            disabled={showResult && isCorrect === true}
             autoComplete="off"
             spellCheck={false}
             className={`w-full text-center text-2xl font-mono px-4 py-3 rounded-lg border transition-colors ${

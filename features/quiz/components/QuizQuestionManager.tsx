@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { useActionState } from "react";
-import { addQuizQuestionAction, updateQuizQuestionAction, deleteQuizQuestionAction } from "../actions";
+import {
+  addQuizQuestionAction,
+  updateQuizQuestionAction,
+  deleteQuizQuestionAction,
+  addQuizAnswerAction,
+  updateQuizAnswerAction,
+  deleteQuizAnswerAction,
+} from "../actions";
 
 type Question = {
   id: string;

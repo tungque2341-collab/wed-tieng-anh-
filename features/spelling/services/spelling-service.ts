@@ -93,15 +93,20 @@ export async function saveSpellingAttempt(
 export async function listSpellingHistory(
   supabase: SupabaseClient,
   studentId: string,
-  lessonId: string,
+  lessonId?: string,
 ): Promise<ServiceResult<SpellingAttempt[]>> {
-  const { data, error } = await supabase
+  let query = supabase
     .from("spelling_attempts")
     .select("*")
     .eq("student_id", studentId)
-    .eq("lesson_id", lessonId)
     .order("created_at", { ascending: false });
 
+  if (lessonId) {
+    query = query.eq("lesson_id", lessonId);
+  }
+
+  const { data, error } = await query;
+
   if (error) return { data: null, error: error.message };
-  return { data: data as SpellingAttempt[], error: null };
+  return { data: (data ?? []) as SpellingAttempt[], error: null };
 }

@@ -372,9 +372,7 @@ export function FallingWordsGame({ words, lessonId, onComplete }: Props) {
             )}
           </div>
           <PhoneticButton
-            text={currentWord?.word ?? ""}
-            phonetic={currentWord?.phonetic}
-            audioUrl={currentWord?.audio_url}
+            phonetic={currentWord?.phonetic ?? undefined}
             className="text-xl px-4 py-2"
           />
         </div>

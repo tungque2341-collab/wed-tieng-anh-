@@ -95,7 +95,7 @@ export async function getQuizWithQuestions(
 
   const questionsWithAnswers = (questions ?? []).map((q) => ({
     ...q,
-    answers: (q.quiz_answers ?? []).sort((a, b) => a.created_at.localeCompare(b.created_at)),
+    answers: (q.quiz_answers ?? []).sort((a: any, b: any) => a.created_at.localeCompare(b.created_at)),
   }));
 
   return { data: { ...quiz, questions: questionsWithAnswers }, error: null };
@@ -122,6 +122,8 @@ export async function getQuizForStudent(
   if (quizError) return { data: null, error: quizError.message };
   if (!quiz) return { data: null, error: "Không tìm thấy quiz hoặc bạn không có quyền truy cập." };
 
+  const quizData = quiz as unknown as Quiz;
+
   const { data: questions, error: qError } = await supabase
     .from("quiz_questions")
     .select("id, quiz_id, question_text, order_index, created_at, quiz_answers(id, question_id, answer_text, created_at)")
@@ -130,13 +132,13 @@ export async function getQuizForStudent(
 
   if (qError) return { data: null, error: qError.message };
 
-  const questionsForStudent = (questions ?? []).map((q) => ({
+  const questionsForStudent = (questions ?? []).map((q: any) => ({
     id: q.id,
     quiz_id: q.quiz_id,
     question_text: q.question_text,
     order_index: q.order_index,
     created_at: q.created_at,
-    answers: (q.quiz_answers ?? []).map((a) => ({
+    answers: (q.quiz_answers ?? []).map((a: any) => ({
       id: a.id,
       question_id: a.question_id,
       answer_text: a.answer_text,
@@ -146,12 +148,12 @@ export async function getQuizForStudent(
 
   return {
     data: {
-      id: quiz.id,
-      teacher_id: quiz.teacher_id,
-      lesson_id: quiz.lesson_id,
-      title: quiz.title,
-      created_at: quiz.created_at,
-      updated_at: quiz.updated_at,
+      id: quizData.id,
+      teacher_id: quizData.teacher_id,
+      lesson_id: quizData.lesson_id,
+      title: quizData.title,
+      created_at: quizData.created_at,
+      updated_at: quizData.updated_at,
       questions: questionsForStudent,
     },
     error: null,

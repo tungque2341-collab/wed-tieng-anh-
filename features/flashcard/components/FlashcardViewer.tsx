@@ -55,11 +55,11 @@ export function FlashcardViewer({ flashcards, lessonId }: Props) {
     (correct: boolean) => {
       if (!currentCard) return;
       setLastAnswerCorrect(correct);
-      studyAction({
-        lesson_id: lessonId,
-        vocabulary_id: currentCard.id,
-        is_correct: String(correct),
-      });
+      const fd = new FormData();
+      fd.set("lesson_id", lessonId);
+      fd.set("vocabulary_id", currentCard.id);
+      fd.set("is_correct", String(correct));
+      studyAction(fd);
       setIsFlipped(true);
       setShowResult(true);
     },
